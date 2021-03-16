@@ -1,0 +1,56 @@
+
+
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>The HTML5 Herald</title>
+  <meta name="description" content="The HTML5 Herald">
+  <meta name="author" content="SitePoint">
+
+  <link rel="stylesheet" href="css/styles.css?v=1.0">
+
+</head>
+
+<body>
+  <div class="options">
+  <label>Post Type:</label>
+  <select class="post-type">:
+    <option value="new">Hot</option>
+    <option value="new">New</option>
+    <option value="top">Top</option>
+    <option value="random">Random</option>
+    <option value="rising">Rising</option>
+    <option value="controversial">Controversial</option>
+  </select>
+</div>
+
+<div class="post-container">
+  <h3>posts from r/JavaScript</h3>
+  <!-- <a class="post" href="(original link for post goes here)">
+	   <div class="title"> title </div>
+	   <div class="content"> content </div>
+	   <div class="author"> author </div>
+	</a>
+	<a class="post" href="(original link for post goes here)">
+	   <div class="title"> title </div>
+	   <div class="content"> content </div>
+	   <div class="author"> author </div>
+	</a> -->
+</div>
+
+<script>
+
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "https://www.reddit.com/r/tifu/top/.json?count=2", false ); // false for synchronous request
+    xmlHttp.send( null );
+    console.log(xmlHttp.responseText);
+    var json_obj = JSON.parse(xmlHttp.responseText)
+    
+    console.log(json_obj.data.children[0].data.selftext)
+    
+</script>
+</body>
+</html>
