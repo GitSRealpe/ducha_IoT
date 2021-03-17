@@ -39,15 +39,22 @@
 	</a> -->
 </div>
 
+<p id="cuadro">Hola cacerola</p>
+
 <script>
 
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", "https://www.reddit.com/r/tifu/top/.json?count=2", false ); // false for synchronous request
+    xmlHttp.open( "GET", "https://www.reddit.com/r/my_iot_dump/hot/.json?count=1", false ); // false for synchronous request
     xmlHttp.send( null );
     console.log(xmlHttp.responseText);
     var json_obj = JSON.parse(xmlHttp.responseText)
 
     console.log(json_obj.data.children[0].data.selftext)
+
+    var x=document.getElementById("cuadro");
+    x.style.color = "red";
+    x.innerHTML=json_obj.data.children[0].data.selftext
+
 
 </script>
 </body>
