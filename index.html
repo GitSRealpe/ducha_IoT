@@ -4,58 +4,95 @@
 <head>
   <meta charset="utf-8">
 
-  <title>The HTML5 Herald</title>
-  <meta name="description" content="The HTML5 Herald">
-  <meta name="author" content="SitePoint">
-
+  <title>Ducha_IoT</title>
+  <meta name="description" content="Data from my IoT shower project.">
+  <meta name="author" content="GitSRealpe">
+  <script src="node_modules/chart.js/dist/chart.js"></script>
   <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
 
 </head>
 
 <body>
   <div class="options">
-  <label>Post Type:</label>
+  <label>Datos:</label>
   <select class="post-type">:
-    <option value="new">Hot</option>
-    <option value="new">New</option>
-    <option value="top">Top</option>
-    <option value="random">Random</option>
-    <option value="rising">Rising</option>
-    <option value="controversial">Controversial</option>
+    <option value="all">Todo</option>
+    <option value="flux">Flujo</option>
+    <option value="vol">Volumen</option>
+    <option value="temp">Temperatura</option>
   </select>
 </div>
 
 <div class="post-container">
-  <h3>posts from r/JavaScript</h3>
-  <!-- <a class="post" href="(original link for post goes here)">
-	   <div class="title"> title </div>
-	   <div class="content"> content </div>
-	   <div class="author"> author </div>
-	</a>
-	<a class="post" href="(original link for post goes here)">
-	   <div class="title"> title </div>
-	   <div class="content"> content </div>
-	   <div class="author"> author </div>
-	</a> -->
+  <h3>Info capturada</h3>
+  <a class="post" href="https://www.reddit.com/r/my_iot_dump/">Info from r/my_iot_dump </a>
 </div>
 
 <p id="cuadro">Hola cacerola</p>
 
+<div class="grafico" style="height:400px; width:1200px">
+  <canvas id="myChart" width="400" height="400"></canvas>
+  <a>Zona Horaria <a id="zona">aqui tu zona</a></a>
+  </div>
+</div>
+
 <script>
-
+    var dato=14;
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open( "GET", "https://www.reddit.com/r/my_iot_dump/hot/.json?count=1", false ); // false for synchronous request
+    xmlHttp.open( "GET", "https://www.reddit.com/r/my_iot_dump/hot/.json?limit=7", false ); // false for synchronous request
     xmlHttp.send( null );
-    console.log(xmlHttp.responseText);
     var json_obj = JSON.parse(xmlHttp.responseText)
-
-    console.log(json_obj.data.children[0].data.selftext)
+    var datos=[1,2,3,4];
+    var fechas=[];
+    var texto="";
+    for (var i = 0; i < json_obj.data.children.length; i++) {
+      texto=texto+json_obj.data.children[i].data.selftext+"<br>"
+      var dato1_index=json_obj.data.children[i].data.selftext.search("Dato1");
+      var dato2_index=json_obj.data.children[i].data.selftext.search("Dato2");
+      datos[i]=parseInt(json_obj.data.children[i].data.selftext.substring(dato1_index+6,dato2_index-2))
+      fecha=new Date(json_obj.data.children[i].data.created_utc*1000);
+      // fechas[i]=fecha.toDateString()+" "+fecha.toLocaleTimeString();
+      fechas[i]=[fecha.toDateString(),fecha.toLocaleTimeString()]
+    }
+    datos=datos.reverse()
+    console.log(datos)
+    fechas=fechas.reverse()
+    console.log(fechas)
 
     var x=document.getElementById("cuadro");
     x.style.color = "red";
-    x.innerHTML=json_obj.data.children[0].data.selftext
-
+    x.innerHTML=texto
+    var x=document.getElementById("zona");
+    x.style.color = "red";
+    x.innerHTML=new Date().toTimeString();
 
 </script>
+
+<script>
+var ctx = document.getElementById('myChart').getContext('2d');
+var myChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+        // labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+        labels: fechas,
+        datasets: [{
+            label: 'Volumen consumido',
+            // data: [12, 19, dato, 5, 2, 3],
+            data: datos,
+            borderColor: [
+                'rgba(99, 00, 00, 1)',
+            ],
+            borderWidth: 5
+        }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {y: {beginAtZero: true}},
+      interaction: {mode:"nearest",intersect:false}
+    }
+});
+</script>
+
 </body>
 </html>
