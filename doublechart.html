@@ -44,24 +44,18 @@
     var json_obj = JSON.parse(xmlHttp.responseText)
     var datos=[1,2,3,4];
     var fechas=[];
-    var tiempos=[];
     var texto="";
     for (var i = 0; i < json_obj.data.children.length; i++) {
       texto=texto+json_obj.data.children[i].data.selftext+"<br>"
       var dato1_index=json_obj.data.children[i].data.selftext.search("Dato1");
       var dato2_index=json_obj.data.children[i].data.selftext.search("Dato2");
       datos[i]=parseInt(json_obj.data.children[i].data.selftext.substring(dato1_index+6,dato2_index-2))
-      tiempos[i]=json_obj.data.children[i].data.selftext.substring(dato2_index+6,dato2_index+11);
-      tiempos[i]=new Date(tiempos[i] * 1000).toISOString().substr(14, 5)//isos formatea de forma simple la fecha
-      console.log(tiempos[i])
       fecha=new Date(json_obj.data.children[i].data.created_utc*1000);
       // fechas[i]=fecha.toDateString()+" "+fecha.toLocaleTimeString();
       fechas[i]=[fecha.toDateString(),fecha.toLocaleTimeString()]
     }
     datos=datos.reverse()
     console.log(datos)
-    tiempos=tiempos.reverse()
-    console.log(tiempos)
     fechas=fechas.reverse()
     console.log(fechas)
 
@@ -75,14 +69,6 @@
 </script>
 
 <script>
-const footer = (tooltipItems) => {
-  let sum="";
-  tooltipItems.forEach(function(tooltipItem) {
-    sum += tiempos[tooltipItem.dataIndex];
-  });
-  return 'Duracion: ' + sum;
-};
-
 var ctx = document.getElementById('myChart').getContext('2d');
 var delayed;
 var myChart = new Chart(ctx, {
@@ -96,8 +82,18 @@ var myChart = new Chart(ctx, {
             data: datos,
             borderColor: ['#092bbaff',],
             backgroundColor: ['#092bffbb',],
-            borderWidth: 3,
-        },]
+            borderWidth: 5,
+            stack: 'combined'
+        }, {
+            label: 'Duracion',
+            type: 'line',
+            fill: false,
+            // backgroundColor: Utils.CHART_COLORS.green,
+            // borderColor: Utils.CHART_COLORS.green,
+            borderDash: [5, 5],
+            data: ["11:11", 19, 12, 15, 2, 3],
+            stack: 'combined'
+          }]
     },
     options: {
       responsive: true,
@@ -114,20 +110,10 @@ var myChart = new Chart(ctx, {
           if (context.type === 'data' && context.mode === 'default' && !delayed) {
             delay = context.dataIndex * 300 + context.datasetIndex * 100;
           }
-          return delay;},
-        },
-        plugins: {
-          title: {
-            display: true,
-            text: (ctx) => 'Sebastian shower stats ',
-          },
-          tooltip: {
-            callbacks: {
-              footer: footer,
-            }
-          }
-        }
-    },
+          return delay;
+        },}
+
+    }
 });
 </script>
 
