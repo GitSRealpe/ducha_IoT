@@ -1,0 +1,145 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+
+  <title>Ducha_IoT</title>
+  <meta name="description" content="Data from my IoT shower project.">
+  <meta name="author" content="GitSRealpe">
+  <script src="node_modules/chart.js/dist/chart.js"></script>
+  <script src="node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.js"></script>
+
+  <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
+
+</head>
+
+<body>
+  <div class="options">
+  <label>Datos:</label>
+  <select class="post-type">:
+    <option value="all">Todo</option>
+    <option value="flux">Flujo</option>
+    <option value="vol">Volumen</option>
+    <option value="temp">Temperatura</option>
+  </select>
+</div>
+
+<div class="post-container">
+  <h3>Info capturada</h3>
+  <a class="post" href="https://www.reddit.com/r/my_iot_dump/">Info from r/my_iot_dump </a>
+</div>
+
+<p id="cuadro">Hola cacerola</p>
+
+<div class="grafico" style="height:400px; width:1200px">
+  <canvas id="myChart" width="400" height="400"></canvas>
+</div>
+<a>Zona Horaria <a id="zona">aqui tu zona</a></a>
+
+<script>
+    var dato=14;
+    var xmlHttp = new XMLHttpRequest();
+    xmlHttp.open( "GET", "https://www.reddit.com/r/my_iot_dump/hot/.json?limit=7", false ); // false for synchronous request
+    xmlHttp.send( null );
+    var json_obj = JSON.parse(xmlHttp.responseText)
+    var datos=[1,2,3,4];
+    var fechas=[];
+    var tiempos=[];
+    var texto="";
+    for (var i = 0; i < json_obj.data.children.length; i++) {
+      texto=texto+json_obj.data.children[i].data.selftext+"<br>"
+      var dato1_index=json_obj.data.children[i].data.selftext.search("Dato1");
+      var dato2_index=json_obj.data.children[i].data.selftext.search("Dato2");
+      datos[i]=parseInt(json_obj.data.children[i].data.selftext.substring(dato1_index+6,dato2_index-2))
+      tiempos[i]=json_obj.data.children[i].data.selftext.substring(dato2_index+6,dato2_index+11);
+      tiempos[i]=new Date(tiempos[i] * 1000).toISOString().substr(14, 5)//isos formatea de forma simple la fecha
+      console.log(tiempos[i])
+      fecha=new Date(json_obj.data.children[i].data.created_utc*1000);
+      // fechas[i]=fecha.toDateString()+" "+fecha.toLocaleTimeString();
+      fechas[i]=[fecha.toDateString(),fecha.toLocaleTimeString()]
+    }
+    datos=datos.reverse()
+    console.log(datos)
+    tiempos=tiempos.reverse()
+    console.log(tiempos)
+    fechas=fechas.reverse()
+    console.log(fechas)
+
+    var x=document.getElementById("cuadro");
+    x.style.color = "red";
+    x.innerHTML=texto
+    var x=document.getElementById("zona");
+    x.style.color = "gray";
+    x.innerHTML=new Date().toTimeString();
+
+</script>
+
+<script>
+const footer = (tooltipItems) => {
+  let sum="";
+  tooltipItems.forEach(function(tooltipItem) {
+    sum += tiempos[tooltipItem.dataIndex];
+  });
+  return 'Duracion: ' + sum;
+};
+
+var ctx = document.getElementById('myChart').getContext('2d');
+var delayed;
+var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: fechas,
+        datasets: [{
+            label: 'Volumen consumido',
+            data: [12, 19, 1, 5, 2, 3],
+            // data: datos,
+            borderColor: ['#092bbaff',],
+            backgroundColor: ['#000000bb',],
+            borderWidth: 3,
+        },]
+    },
+    plugins: [ChartDataLabels],
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {y: {beginAtZero: true}},
+      // interaction: {mode:"nearest",intersect:false},
+      interaction: {mode:"index",intersect:false},
+      animation: {
+        onComplete: () => {
+          delayed = true;
+        },
+        delay: (ctx) => {
+          let delay = 0;
+          if (ctx.type === 'data' && ctx.mode === 'default' && !delayed) {
+            delay = ctx.dataIndex * 300 + ctx.datasetIndex * 100;
+          }
+          return delay;},
+        },
+        plugins: {
+          datalabels: {
+                  color: 'black',
+                  font: {
+                    weight: 'bold'
+                  },
+                  formatter: Math.round
+                },
+
+          title: {
+            display: true,
+            text: (ctx) => 'Sebastian\'s shower stats ',
+          },
+          tooltip: {
+            callbacks: {
+              footer: footer,
+            }
+          }
+        }
+    },
+});
+
+</script>
+
+</body>
+</html>
