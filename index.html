@@ -7,8 +7,9 @@
   <title>Ducha_IoT</title>
   <meta name="description" content="Data from my IoT shower project.">
   <meta name="author" content="GitSRealpe">
-  <script src="js_libs/chart.js/dist/chart.js"></script>
-  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.2/chart.js" integrity="sha512-n8DscwKN6+Yjr7rI6mL+m9nS4uCEgIrKRFcP0EOkIvzOLUyQgOjWK15hRfoCJQZe0s6XrARyXjpvGFo1w9N3xg==" crossorigin="anonymous"></script> -->
+  <script src="node_modules/chart.js/dist/chart.js"></script>
+  <script src="node_modules/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.js"></script>
+
   <!-- <link rel="stylesheet" href="css/styles.css?v=1.0"> -->
 
 </head>
@@ -83,6 +84,9 @@ const footer = (tooltipItems) => {
   return 'Duracion: ' + sum;
 };
 
+var yourImage = new Image()
+  yourImage.src ='https://iconarchive.com/download/i103481/paomedia/small-n-flat/sign-warning.ico';
+
 var ctx = document.getElementById('myChart').getContext('2d');
 var delayed;
 var myChart = new Chart(ctx, {
@@ -97,8 +101,14 @@ var myChart = new Chart(ctx, {
             borderColor: ['#092bbaff',],
             backgroundColor: ['#092bffbb',],
             borderWidth: 3,
+            datalabels: {
+              align: 'start',
+              anchor: 'end',
+              offset: 10
+            },
         },]
     },
+    plugins: [ChartDataLabels],
     options: {
       responsive: true,
       maintainAspectRatio: false,
@@ -125,7 +135,20 @@ var myChart = new Chart(ctx, {
             callbacks: {
               footer: footer,
             }
-          }
+          },
+          datalabels: {
+                  clamp: 'true',
+                  backgroundColor: function(context) {
+                    return context.dataset.backgroundColor;
+                  },
+                  borderRadius: 10,
+                  padding: 6,
+                  color: 'white',
+                  font: {
+                    weight: 'bold'
+                  },
+                  // formatter: Math.round
+                }
         }
     },
 });
