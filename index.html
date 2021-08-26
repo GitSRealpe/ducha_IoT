@@ -1,5 +1,4 @@
 <!doctype html>
-
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -14,7 +13,7 @@
 
 </head>
 
-<body>
+<!-- <body>
   <div class="options">
   <label>Datos:</label>
   <select class="post-type">:
@@ -23,14 +22,11 @@
     <option value="vol">Volumen</option>
     <option value="temp">Temperatura</option>
   </select>
-</div>
+</div> -->
 
 <div class="post-container">
-  <h3>Info capturada</h3>
   <a class="post" href="https://www.reddit.com/r/my_iot_dump/">Info from r/my_iot_dump </a>
 </div>
-
-<p id="cuadro">Hola cacerola</p>
 
 <div class="grafico" style="height:400px; width:1200px">
   <canvas id="myChart" width="400" height="400"></canvas>
@@ -52,6 +48,7 @@
       var dato1_index=json_obj.data.children[i].data.selftext.search("Dato1");
       var dato2_index=json_obj.data.children[i].data.selftext.search("Dato2");
       datos[i]=parseInt(json_obj.data.children[i].data.selftext.substring(dato1_index+6,dato2_index-2))
+      datos[i]=((2.44*datos[i]-0.829)*0.001).toFixed(2)
       tiempos[i]=json_obj.data.children[i].data.selftext.substring(dato2_index+6,dato2_index+11);
       tiempos[i]=new Date(tiempos[i] * 1000).toISOString().substr(14, 5)//isos formatea de forma simple la fecha
       console.log(tiempos[i])
